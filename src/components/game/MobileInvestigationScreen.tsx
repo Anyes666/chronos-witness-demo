@@ -26,6 +26,7 @@ function targetPanelToTab(targetPanel: Objective["targetPanel"]): MobileTab {
 
 export function MobileInvestigationScreen({ onAccuse }: MobileInvestigationScreenProps) {
   const [activeTab, setActiveTab] = useState<MobileTab>("scene");
+  const [tutorialReopenSignal, setTutorialReopenSignal] = useState(0);
   const rawState = useGameStore((s) => s.getRawState());
 
   const handleObjectiveAction = useCallback((objective: Objective) => {
@@ -46,7 +47,7 @@ export function MobileInvestigationScreen({ onAccuse }: MobileInvestigationScree
       case "evidence":
         return <EvidencePanel />;
       case "board":
-        return <TestimonyBoard />;
+        return <TestimonyBoard onNavigate={(target) => setActiveTab(target)} />;
       case "rewind":
         return <RewindPanel onAccuse={onAccuse} />;
       default:
@@ -56,12 +57,21 @@ export function MobileInvestigationScreen({ onAccuse }: MobileInvestigationScree
 
   return (
     <AppShell showNav activeTab={activeTab} onTabChange={(tabId) => setActiveTab(tabId as MobileTab)}>
-      <TutorialOverlay />
+      <TutorialOverlay reopenSignal={tutorialReopenSignal} />
       <ObjectivePanel
         state={rawState}
         mode="mobile"
         onAction={handleObjectiveAction}
       />
+      <div className="mx-3 mt-2 flex justify-end">
+        <button
+          type="button"
+          className="min-h-11 rounded-md border border-slate-700 bg-slate-900 px-3 text-sm text-slate-300"
+          onClick={() => setTutorialReopenSignal((signal) => signal + 1)}
+        >
+          重新打开引导
+        </button>
+      </div>
       {renderTab()}
     </AppShell>
   );

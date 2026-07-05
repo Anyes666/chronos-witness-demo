@@ -32,6 +32,7 @@ const PANEL_TITLES: Record<Exclude<OverlayPanel, "none">, string> = {
 
 export function DesktopInvestigationScreen({ onAccuse }: DesktopInvestigationScreenProps) {
   const [panel, setPanel] = useState<OverlayPanel>("none");
+  const [tutorialReopenSignal, setTutorialReopenSignal] = useState(0);
   const canRewind = useGameStore((s) => s.canRewind);
   const rawState = useGameStore((s) => s.getRawState());
 
@@ -123,7 +124,7 @@ export function DesktopInvestigationScreen({ onAccuse }: DesktopInvestigationScr
         />
       </div>
 
-      <TutorialOverlay />
+      <TutorialOverlay reopenSignal={tutorialReopenSignal} />
       <DebugPanel />
 
       <div className="absolute bottom-6 left-4 z-20 select-none space-y-1 text-xs text-slate-500 pointer-events-none">
@@ -136,6 +137,9 @@ export function DesktopInvestigationScreen({ onAccuse }: DesktopInvestigationScr
       </div>
 
       <div className="absolute bottom-6 right-4 z-20 flex flex-col gap-2 pointer-events-auto">
+        <Button size="sm" variant="ghost" onClick={() => setTutorialReopenSignal((signal) => signal + 1)}>
+          引导
+        </Button>
         <Button size="sm" variant="secondary" onClick={() => openPanel("npcs")}>
           证人
         </Button>
@@ -170,7 +174,7 @@ export function DesktopInvestigationScreen({ onAccuse }: DesktopInvestigationScr
             {panel === "scene" && <ScenePanel />}
             {panel === "npcs" && <NpcPanel />}
             {panel === "evidence" && <EvidencePanel />}
-            {panel === "board" && <TestimonyBoard />}
+            {panel === "board" && <TestimonyBoard onNavigate={openPanel} />}
             {panel === "rewind" && <RewindPanel onAccuse={onAccuse} />}
           </div>
         </div>
