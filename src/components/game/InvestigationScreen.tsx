@@ -1,43 +1,19 @@
 // src/components/game/InvestigationScreen.tsx
-import { useState } from "react";
-import { AppShell } from "../layout/AppShell";
-import { ScenePanel } from "./ScenePanel";
-import { EvidencePanel } from "./EvidencePanel";
-import { NpcPanel } from "./NpcPanel";
-import { TestimonyBoard } from "./TestimonyBoard";
-import { RewindPanel } from "./RewindPanel";
+// 调查主界面 — 桌面端 3D / 手机端 2D
+import { useIsMobile } from "./useIsMobile";
+import { DesktopInvestigationScreen } from "./DesktopInvestigationScreen";
+import { MobileInvestigationScreen } from "./MobileInvestigationScreen";
 
 interface InvestigationScreenProps {
   onAccuse: () => void;
 }
 
 export function InvestigationScreen({ onAccuse }: InvestigationScreenProps) {
-  const [activeTab, setActiveTab] = useState("scene");
+  const isMobile = useIsMobile();
 
-  const renderTab = () => {
-    switch (activeTab) {
-      case "scene":
-        return <ScenePanel />;
-      case "npcs":
-        return <NpcPanel />;
-      case "evidence":
-        return <EvidencePanel />;
-      case "board":
-        return <TestimonyBoard />;
-      case "rewind":
-        return <RewindPanel onAccuse={onAccuse} />;
-      default:
-        return <ScenePanel />;
-    }
-  };
+  if (isMobile) {
+    return <MobileInvestigationScreen onAccuse={onAccuse} />;
+  }
 
-  return (
-    <AppShell
-      showNav
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-    >
-      {renderTab()}
-    </AppShell>
-  );
+  return <DesktopInvestigationScreen onAccuse={onAccuse} />;
 }
