@@ -146,7 +146,7 @@ export function ThirdPersonController({ onInteract }: ThirdPersonControllerProps
           }}
         >
           <planeGeometry args={[5, 2.5]} />
-          <meshBasicMaterial color="#f59e0b" transparent opacity={0.5} />
+          <meshBasicMaterial color="#0f172a" transparent opacity={0.01} depthWrite={false} />
         </mesh>
       )}
     </>

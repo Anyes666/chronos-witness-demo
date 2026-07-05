@@ -1,23 +1,24 @@
-// src/components/three/SceneLighting.tsx
-
 export function SceneLighting() {
   return (
     <>
-      {/* 环境光 */}
-      <ambientLight intensity={0.3} color="#3b4a6b" />
-      {/* 主方向光 — 冷蓝 */}
+      <hemisphereLight args={["#9cc7ff", "#1e293b", 0.8]} />
+      <ambientLight intensity={0.55} color="#6f86b8" />
+
       <directionalLight
-        position={[5, 10, 0]}
-        intensity={0.6}
-        color="#a0c4ff"
+        position={[4, 9, 5]}
+        intensity={1.45}
+        color="#c7dcff"
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
-      {/* 补光 — 暖金 */}
-      <pointLight position={[-3, 3, -4]} intensity={0.4} color="#c9a44b" />
-      {/* 读取器蓝光 */}
-      <pointLight position={[0, 1.5, -2]} intensity={0.5} color="#4da6ff" />
+
+      <pointLight position={[0, 2.3, -2]} intensity={2.1} color="#4da6ff" distance={9} />
+      <pointLight position={[-4, 2.2, -5]} intensity={0.9} color="#d1a64a" distance={6} />
+      <pointLight position={[1.6, 1.3, -1.4]} intensity={0.55} color="#d1a64a" distance={4} />
+      <pointLight position={[-6, 2.5, 3]} intensity={0.55} color="#9cc7ff" distance={5} />
+      <pointLight position={[5, 2.5, -4]} intensity={0.65} color="#9cc7ff" distance={5} />
+      <pointLight position={[6, 2.5, -7]} intensity={0.65} color="#9ff5d0" distance={5} />
     </>
   );
 }
