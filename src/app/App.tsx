@@ -6,52 +6,37 @@ import { BriefingScreen } from "../components/game/BriefingScreen";
 import { InvestigationScreen } from "../components/game/InvestigationScreen";
 import { AccusationPanel } from "../components/game/AccusationPanel";
 import { EndingPanel } from "../components/game/EndingPanel";
+import { ToastContainer } from "../components/ui/Toast";
 
 type Page = "start" | "briefing" | "investigation" | "accusation" | "ending";
 
-export default function App() {
-  const [page, setPage] = useState<Page>("start");
+function PageRenderer({ page, onPage }: { page: Page; onPage: (p: Page) => void }) {
   const newGame = useGameStore((s) => s.newGame);
   const endingId = useGameStore((s) => s.endingId);
 
-  const handleStart = () => {
-    newGame();
-    setPage("briefing");
-  };
-
-  const handleBriefingContinue = () => {
-    setPage("investigation");
-  };
-
-  const handleAccuse = () => {
-    if (endingId) {
-      setPage("ending");
-    } else {
-      setPage("accusation");
-    }
-  };
-
-  const handleAccuseComplete = () => {
-    setPage("ending");
-  };
-
-  const handleRestart = () => {
-    newGame();
-    setPage("start");
-  };
-
   switch (page) {
     case "start":
-      return <StartScreen onStart={handleStart} />;
+      return <StartScreen onStart={() => { newGame(); onPage("briefing"); }} />;
     case "briefing":
-      return <BriefingScreen onContinue={handleBriefingContinue} />;
+      return <BriefingScreen onContinue={() => onPage("investigation")} />;
     case "investigation":
-      return <InvestigationScreen onAccuse={handleAccuse} />;
+      return <InvestigationScreen onAccuse={() => onPage(endingId ? "ending" : "accusation")} />;
     case "accusation":
-      return <AccusationPanel onComplete={handleAccuseComplete} />;
+      return <AccusationPanel onComplete={() => onPage("ending")} />;
     case "ending":
-      return <EndingPanel onRestart={handleRestart} />;
+      return <EndingPanel onRestart={() => { newGame(); onPage("start"); }} />;
     default:
-      return <StartScreen onStart={handleStart} />;
+      return <StartScreen onStart={() => { newGame(); onPage("briefing"); }} />;
   }
+}
+
+export default function App() {
+  const [page, setPage] = useState<Page>("start");
+
+  return (
+    <>
+      <PageRenderer page={page} onPage={setPage} />
+      <ToastContainer />
+    </>
+  );
 }

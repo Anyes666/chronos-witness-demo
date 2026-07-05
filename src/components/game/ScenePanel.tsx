@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { useGameStore } from "../../engine/gameStore";
+import { feedbackStore } from "../../engine/feedbackStore";
 import { DEMO_LOCATIONS } from "../../data/cases/demo_shm_001/scene";
 import type { Evidence } from "../../engine/types";
 
@@ -68,7 +69,7 @@ export function ScenePanel() {
                   </p>
                 </div>
                 {!found && (
-                  <Button size="sm" onClick={() => discoverEvidence(ev.id)}>
+                  <Button size="sm" onClick={() => { discoverEvidence(ev.id); feedbackStore.success(`已发现物证：${ev.name}`); }}>
                     调查
                   </Button>
                 )}

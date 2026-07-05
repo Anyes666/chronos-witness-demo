@@ -2,6 +2,7 @@
 import { useGameStore } from "../../engine/gameStore";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
+import { feedbackStore } from "../../engine/feedbackStore";
 
 interface RewindPanelProps {
   onAccuse: () => void;
@@ -41,7 +42,7 @@ export function RewindPanel({ onAccuse }: RewindPanelProps) {
           <p className="text-sm text-amber-400 mb-3">
             ⚠️ 回溯会扰动时空，证词将发生变化。每次回溯熵值 +15。
           </p>
-          <Button variant="primary" onClick={rewind} className="w-full">
+          <Button variant="primary" onClick={() => { rewind(); feedbackStore.success(`已回溯至第 ${currentRound + 1} 轮 — 证词已变化`); }} className="w-full">
             执行回溯 → 第 {currentRound + 1} 轮
           </Button>
         </div>

@@ -5,6 +5,7 @@ import { Card } from "../ui/Card";
 import { useGameStore } from "../../engine/gameStore";
 import { ACCUSATION_WHO, ACCUSATION_VERSION } from "../../data/cases/demo_shm_001/endings";
 import { evaluateEvidenceCoverage } from "../../engine/accusationEngine";
+import { feedbackStore } from "../../engine/feedbackStore";
 
 interface AccusationPanelProps {
   onComplete: () => void;
@@ -20,8 +21,10 @@ export function AccusationPanel({ onComplete }: AccusationPanelProps) {
   const coverage = evaluateEvidenceCoverage(getRawState());
 
   const handleSubmit = () => {
-    if (!who || !version) return;
+    if (!who) { feedbackStore.warning("请先选择谁造成了死亡"); return; }
+    if (!version) { feedbackStore.warning("请选择要固定的真相版本"); return; }
     submitAccusation({ whoCausedDeath: who, whichVersionToFix: version });
+    feedbackStore.success("指控已提交");
     onComplete();
   };
 
