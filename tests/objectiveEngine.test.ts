@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getCurrentObjective, getObjectiveList, getObjectiveProgress } from "../src/engine/objectiveEngine";
+import {
+  getCurrentObjective,
+  getObjectiveDisplayMeta,
+  getObjectiveList,
+  getObjectiveProgress,
+} from "../src/engine/objectiveEngine";
 import { createNewSession } from "../src/engine/sessionEngine";
 import { discoverEvidence } from "../src/engine/evidenceEngine";
 import { askNpc } from "../src/engine/testimonyEngine";
@@ -93,5 +98,16 @@ describe("objectiveEngine", () => {
     expect(progress.total).toBe(objectives.length);
     expect(progress.completed).toBeGreaterThanOrEqual(1);
     expect(progress.percent).toBeGreaterThan(0);
+  });
+
+  it("provides display metadata for every objective category", () => {
+    expect(getObjectiveDisplayMeta("investigate")).toEqual({
+      label: "调查",
+      badgeVariant: "info",
+    });
+    expect(getObjectiveDisplayMeta("interrogate").label).toBe("询问");
+    expect(getObjectiveDisplayMeta("compare").label).toBe("比对");
+    expect(getObjectiveDisplayMeta("rewind").label).toBe("回溯");
+    expect(getObjectiveDisplayMeta("accuse").label).toBe("指控");
   });
 });

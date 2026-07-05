@@ -1,20 +1,41 @@
-// src/components/game/MobileInvestigationScreen.tsx
-// 手机端：2D Tab 调查界面（保留原流程）
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useGameStore } from "../../engine/gameStore";
+import type { Objective } from "../../engine/objectiveEngine";
 import { AppShell } from "../layout/AppShell";
-import { ScenePanel } from "./ScenePanel";
 import { EvidencePanel } from "./EvidencePanel";
 import { NpcPanel } from "./NpcPanel";
-import { TestimonyBoard } from "./TestimonyBoard";
+import { ObjectivePanel } from "./ObjectivePanel";
 import { RewindPanel } from "./RewindPanel";
+import { ScenePanel } from "./ScenePanel";
+import { TestimonyBoard } from "./TestimonyBoard";
 import { TutorialOverlay } from "./TutorialOverlay";
 
 interface MobileInvestigationScreenProps {
   onAccuse: () => void;
 }
 
+type MobileTab = "scene" | "npcs" | "evidence" | "board" | "rewind";
+
+function targetPanelToTab(targetPanel: Objective["targetPanel"]): MobileTab {
+  if (targetPanel === "npcs") return "npcs";
+  if (targetPanel === "evidence") return "evidence";
+  if (targetPanel === "board") return "board";
+  if (targetPanel === "rewind") return "rewind";
+  return "scene";
+}
+
 export function MobileInvestigationScreen({ onAccuse }: MobileInvestigationScreenProps) {
-  const [activeTab, setActiveTab] = useState("scene");
+  const [activeTab, setActiveTab] = useState<MobileTab>("scene");
+  const rawState = useGameStore((s) => s.getRawState());
+
+  const handleObjectiveAction = useCallback((objective: Objective) => {
+    if (objective.targetPanel === "accusation") {
+      onAccuse();
+      return;
+    }
+
+    setActiveTab(targetPanelToTab(objective.targetPanel));
+  }, [onAccuse]);
 
   const renderTab = () => {
     switch (activeTab) {
@@ -34,8 +55,13 @@ export function MobileInvestigationScreen({ onAccuse }: MobileInvestigationScree
   };
 
   return (
-    <AppShell showNav activeTab={activeTab} onTabChange={setActiveTab}>
+    <AppShell showNav activeTab={activeTab} onTabChange={(tabId) => setActiveTab(tabId as MobileTab)}>
       <TutorialOverlay />
+      <ObjectivePanel
+        state={rawState}
+        mode="mobile"
+        onAction={handleObjectiveAction}
+      />
       {renderTab()}
     </AppShell>
   );

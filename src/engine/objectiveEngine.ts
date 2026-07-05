@@ -18,6 +18,23 @@ export interface Objective {
   targetPanel?: "scene" | "npcs" | "evidence" | "board" | "rewind" | "accusation";
 }
 
+export interface ObjectiveDisplayMeta {
+  label: string;
+  badgeVariant: "default" | "success" | "warning" | "danger" | "info";
+}
+
+const OBJECTIVE_DISPLAY_META: Record<ObjectiveCategory, ObjectiveDisplayMeta> = {
+  investigate: { label: "调查", badgeVariant: "info" },
+  interrogate: { label: "询问", badgeVariant: "warning" },
+  compare: { label: "比对", badgeVariant: "success" },
+  rewind: { label: "回溯", badgeVariant: "warning" },
+  accuse: { label: "指控", badgeVariant: "danger" },
+};
+
+export function getObjectiveDisplayMeta(category: ObjectiveCategory): ObjectiveDisplayMeta {
+  return OBJECTIVE_DISPLAY_META[category];
+}
+
 function hasEvidence(state: GameSaveData, evidenceId: EvidenceId): boolean {
   return state.discoveredEvidenceIds.includes(evidenceId);
 }

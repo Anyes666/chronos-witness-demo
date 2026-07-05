@@ -35,7 +35,13 @@ describe("hintEngine", () => {
   });
 
   it("does not leak the final killer or the full truth", () => {
-    const forbidden = ["林叙就是凶手", "凶手是林叙", "killer", "hiddenTruth"];
+    const forbidden = [
+      "林叙就是凶手",
+      "凶手是林叙",
+      "真凶",
+      "hiddenTruth",
+      "强制说完整答案",
+    ];
 
     for (const objectiveId of coreObjectiveIds) {
       for (const level of [1, 2, 3] as const) {
