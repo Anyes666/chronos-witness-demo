@@ -302,3 +302,34 @@ export interface GameSaveData {
   endingId?: EndingId;
   savedAt: string;
 }
+
+// ---- 3D 场景类型 ----
+
+/** 3D 场景中的可交互对象 */
+export interface SceneObject3D {
+  id: string;
+  name: string;
+  type: "evidence" | "npc" | "terminal" | "door" | "decoration";
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number, number];
+  linkedEvidenceId?: EvidenceId;
+  linkedNpcId?: NpcId;
+  interactable: boolean;
+  visibleFromRound: RoundIndex;
+}
+
+/** 3D 场景配置 */
+export interface Scene3DConfig {
+  id: string;
+  name: string;
+  spawnPoint: [number, number, number];
+  cameraStart: [number, number, number];
+  bounds: {
+    minX: number;
+    maxX: number;
+    minZ: number;
+    maxZ: number;
+  };
+  objects: SceneObject3D[];
+}
