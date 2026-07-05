@@ -20,7 +20,12 @@ function PageRenderer({ page, onPage }: { page: Page; onPage: (p: Page) => void 
     case "briefing":
       return <BriefingScreen onContinue={() => onPage("investigation")} />;
     case "investigation":
-      return <InvestigationScreen onAccuse={() => onPage(endingId ? "ending" : "accusation")} />;
+      return (
+        <InvestigationScreen
+          onAccuse={() => onPage(endingId ? "ending" : "accusation")}
+          onBriefing={() => onPage("briefing")}
+        />
+      );
     case "accusation":
       return <AccusationPanel onComplete={() => onPage("ending")} />;
     case "ending":

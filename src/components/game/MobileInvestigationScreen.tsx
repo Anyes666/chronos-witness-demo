@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { useGameStore } from "../../engine/gameStore";
 import type { Objective } from "../../engine/objectiveEngine";
 import { AppShell } from "../layout/AppShell";
 import { EvidencePanel } from "./EvidencePanel";
@@ -9,6 +8,7 @@ import { RewindPanel } from "./RewindPanel";
 import { ScenePanel } from "./ScenePanel";
 import { TestimonyBoard } from "./TestimonyBoard";
 import { TutorialOverlay } from "./TutorialOverlay";
+import { useGameSaveData } from "./useGameSaveData";
 
 interface MobileInvestigationScreenProps {
   onAccuse: () => void;
@@ -27,7 +27,7 @@ function targetPanelToTab(targetPanel: Objective["targetPanel"]): MobileTab {
 export function MobileInvestigationScreen({ onAccuse }: MobileInvestigationScreenProps) {
   const [activeTab, setActiveTab] = useState<MobileTab>("scene");
   const [tutorialReopenSignal, setTutorialReopenSignal] = useState(0);
-  const rawState = useGameStore((s) => s.getRawState());
+  const rawState = useGameSaveData();
 
   const handleObjectiveAction = useCallback((objective: Objective) => {
     if (objective.targetPanel === "accusation") {

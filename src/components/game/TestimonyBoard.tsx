@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGameStore } from "../../engine/gameStore";
 import { DEMO_NPCS } from "../../data/cases/demo_shm_001/witnesses";
 import type { GameSaveData, NpcId, TestimonyRecord } from "../../engine/types";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { useGameSaveData } from "./useGameSaveData";
 
 export const BOARD_GUIDE_STORAGE_KEY = "chronos_testimony_board_guide_seen";
 
@@ -77,15 +78,30 @@ interface TestimonyBoardProps {
 export function TestimonyBoard({ onNavigate }: TestimonyBoardProps) {
   const getTestimonyBoard = useGameStore((s) => s.getTestimonyBoard);
   const getStableFactCoverage = useGameStore((s) => s.getStableFactCoverage);
-  const rawState = useGameStore((s) => s.getRawState());
+  const rawState = useGameSaveData();
   const [selectedNpc, setSelectedNpc] = useState<NpcId | null>(null);
   const [showGuide, setShowGuide] = useState(false);
 
-  const board = getTestimonyBoard();
-  const coverage = getStableFactCoverage();
-  const status = getTestimonyBoardStatus(rawState.testimonyHistory);
-  const npcFiltered = selectedNpc ? board.filter((row) => row.npcId === selectedNpc) : board;
-  const reasoningHints = getTestimonyReasoningHints(rawState);
+  const board = useMemo(
+    () => getTestimonyBoard(),
+    [getTestimonyBoard, rawState.testimonyHistory, rawState.playerMarks],
+  );
+  const coverage = useMemo(
+    () => getStableFactCoverage(),
+    [getStableFactCoverage, rawState.testimonyHistory],
+  );
+  const status = useMemo(
+    () => getTestimonyBoardStatus(rawState.testimonyHistory),
+    [rawState.testimonyHistory],
+  );
+  const npcFiltered = useMemo(
+    () => selectedNpc ? board.filter((row) => row.npcId === selectedNpc) : board,
+    [board, selectedNpc],
+  );
+  const reasoningHints = useMemo(
+    () => getTestimonyReasoningHints(rawState),
+    [rawState],
+  );
 
   useEffect(() => {
     const seen = localStorage.getItem(BOARD_GUIDE_STORAGE_KEY);

@@ -7,19 +7,24 @@ import { ThreeGameRoot } from "../three/ThreeGameRoot";
 import { controllerEvents } from "../three/ThirdPersonController";
 import { setOverlayOpen } from "../three/ThreeGameRoot";
 import { Button } from "../ui/Button";
+import { ErrorBoundary } from "../ui/ErrorBoundary";
 import { DebugPanel } from "./DebugPanel";
 import { EvidencePanel } from "./EvidencePanel";
+import { InvestigationFallback } from "./InvestigationFallback";
+import { MobileInvestigationScreen } from "./MobileInvestigationScreen";
 import { NpcPanel } from "./NpcPanel";
 import { ObjectivePanel } from "./ObjectivePanel";
 import { RewindPanel } from "./RewindPanel";
 import { ScenePanel } from "./ScenePanel";
 import { TestimonyBoard } from "./TestimonyBoard";
 import { TutorialOverlay } from "./TutorialOverlay";
+import { useGameSaveData } from "./useGameSaveData";
 
 type OverlayPanel = "none" | "scene" | "npcs" | "evidence" | "board" | "rewind";
 
 interface DesktopInvestigationScreenProps {
   onAccuse: () => void;
+  onBriefing?: () => void;
 }
 
 const PANEL_TITLES: Record<Exclude<OverlayPanel, "none">, string> = {
@@ -30,11 +35,37 @@ const PANEL_TITLES: Record<Exclude<OverlayPanel, "none">, string> = {
   rewind: "回溯控制",
 };
 
-export function DesktopInvestigationScreen({ onAccuse }: DesktopInvestigationScreenProps) {
+export function DesktopInvestigationScreen({ onAccuse, onBriefing }: DesktopInvestigationScreenProps) {
+  const [use2DMode, setUse2DMode] = useState(false);
+
+  if (use2DMode) {
+    return <MobileInvestigationScreen onAccuse={onAccuse} />;
+  }
+
+  return (
+    <ErrorBoundary
+      fallback={({ error, reset }) => (
+        <InvestigationFallback
+          error={error}
+          onRefresh={() => window.location.reload()}
+          onReturnBriefing={onBriefing}
+          onSwitchTo2D={() => {
+            reset();
+            setUse2DMode(true);
+          }}
+        />
+      )}
+    >
+      <DesktopInvestigationContent onAccuse={onAccuse} />
+    </ErrorBoundary>
+  );
+}
+
+function DesktopInvestigationContent({ onAccuse }: DesktopInvestigationScreenProps) {
   const [panel, setPanel] = useState<OverlayPanel>("none");
   const [tutorialReopenSignal, setTutorialReopenSignal] = useState(0);
   const canRewind = useGameStore((s) => s.canRewind);
-  const rawState = useGameStore((s) => s.getRawState());
+  const rawState = useGameSaveData();
 
   const closePanel = useCallback(() => {
     setPanel("none");

@@ -6,14 +6,15 @@ import { MobileInvestigationScreen } from "./MobileInvestigationScreen";
 
 interface InvestigationScreenProps {
   onAccuse: () => void;
+  onBriefing?: () => void;
 }
 
-export function InvestigationScreen({ onAccuse }: InvestigationScreenProps) {
+export function InvestigationScreen({ onAccuse, onBriefing }: InvestigationScreenProps) {
   const isMobile = useIsMobile();
 
   if (isMobile) {
     return <MobileInvestigationScreen onAccuse={onAccuse} />;
   }
 
-  return <DesktopInvestigationScreen onAccuse={onAccuse} />;
+  return <DesktopInvestigationScreen onAccuse={onAccuse} onBriefing={onBriefing} />;
 }
